@@ -1,0 +1,37 @@
+name: Build FlameTest APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Extract CodeForge Flame project
+        run: unzip -q FlameTest.zip
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Prepare Flame Android project
+        working-directory: FlameTest
+        run: bash tool/bootstrap_android.sh
+
+      - name: Build release APK
+        working-directory: FlameTest
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: FlameTest-release-apk
+          path: FlameTest/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
