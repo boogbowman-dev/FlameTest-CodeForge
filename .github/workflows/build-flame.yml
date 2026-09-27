@@ -1,4 +1,4 @@
-name: Build FlameTest APK
+name: Build V10 Scenes Test
 
 on:
   workflow_dispatch:
@@ -12,8 +12,8 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Extract CodeForge Flame project
-        run: unzip -q FlameTest.zip
+      - name: Extract V10.2 project
+        run: unzip V10ScenesTest.zip
 
       - name: Install Flutter
         uses: subosito/flutter-action@v2
@@ -21,17 +21,18 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Prepare Flame Android project
-        working-directory: FlameTest
+      - name: Generate Android host and verify game
+        working-directory: V10ScenesTest
         run: bash tool/bootstrap_android.sh
 
       - name: Build release APK
-        working-directory: FlameTest
+        working-directory: V10ScenesTest
         run: flutter build apk --release
 
-      - name: Upload APK
+      - name: Upload release APK
         uses: actions/upload-artifact@v4
         with:
-          name: FlameTest-release-apk
-          path: FlameTest/build/app/outputs/flutter-apk/app-release.apk
+          name: V10ScenesTest-release-apk
+          path: V10ScenesTest/build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
+          retention-days: 14
